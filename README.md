@@ -37,5 +37,9 @@ You can change how much spacing you want between the rivens by changing the marg
 
 You can also change the color of the rivens by editing lines 21-23. The default value is green, but I have commented the values you need to change to create red, blue, green, and gold.
 
+### Example
+
+By default, I have included an example where the input consists of 16 riven screenshots, the output contains all the individual rivens as well as the collage.
+
 
 
