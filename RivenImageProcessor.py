@@ -6,7 +6,7 @@ from os.path import exists
 def changeColor(img):
     width = img.size[0]
     height = img.size[1]
-    for i in range(0,width):# process all pixels
+    for i in range(0,width):
         for j in range(0,height):
             data = img.getpixel((i,j))
             r = data[0]
@@ -38,7 +38,7 @@ def changeColor(img):
             if isBackground(i,j,r,g,b):
                 img.putpixel((i,j),(42,43,48,1))
 
-    img.show()
+    #img.show()
 
     return img
 def isBackground(i,j,r,g,b):
@@ -55,23 +55,25 @@ def cropImage(img, leftMargin, rightMargin, topMargin, bottomMargin):
     width, height = img.size
     img = img.crop((leftMargin, topMargin, width - rightMargin, height - bottomMargin))
     return img
-def concatImages(columns, rows, imgName):
-    os.chdir("C:/users/swagn/downloads/RivenCollection/Output")
+def concatImages(columns, rows, imgName, outPath):
+    os.chdir(outPath)
     if exists(imgName):
         os.remove(imgName)
     os.system("magick montage -mode concatenate -tile " + str(columns) + "x" + str(rows) + " *.jpg " + imgName)
 
 
-inPath = "C:/Users/swagn/downloads/RivenCollection/Raw2"
-outPath = "C:/Users/swagn/downloads/RivenCollection/Output"
+rootPath = "C:/Users/swagn/downloads/"
+
+inPath = rootPath + "RivenCollection/Raw"
+outPath = rootPath + "RivenCollection/Output"
 
 leftMargin = 815  
 rightMargin = 815
 topMargin = 350
 bottomMargin = 335
 
-rows = 1
-columns = 2
+rows = 4
+columns = 4
 
 finalImageName = "Final.jpg"
 
@@ -81,9 +83,9 @@ for imagePath in os.listdir(inPath):
         img = changeColor(cropImage(Image.open(inputPath), leftMargin, rightMargin, topMargin, bottomMargin))
         img.save(fullOutPath)
 
-#concatImages(columns, rows, finalImageName)
+concatImages(columns, rows, finalImageName, outPath)
 
-#Image.open("C:/users/swagn/downloads/RivenCollection/Output/" + finalImageName).show()
+Image.open(outPath + "/" + finalImageName).show()
 
 
 
