@@ -41,5 +41,9 @@ You can also change the color of the rivens by editing lines 21-23. The default 
 
 By default, I have included an example where the input consists of 16 riven screenshots, the output contains all the individual rivens as well as the collage.
 
+### Credits
+
+Thank you to Lorelei for telling me about ImageMagick, and thank you Smurfdaddy for showing how a hue transfer works.
+
 
 
