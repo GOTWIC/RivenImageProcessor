@@ -47,5 +47,10 @@ By default, I have included an example where the input consists of 16 riven scre
 
 Thank you to Lorelei for telling me about ImageMagick, and thank you Smurfdaddy for showing how a hue transfer works.
 
+### Todo
+
+ - Account for different margins when deciding background cutoffs
+ - Custom Image concatonation instead of ImageMagick
+
 
 
