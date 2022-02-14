@@ -16,7 +16,7 @@ https://imagemagick.org/script/download.php
  - A folder called **Raw**
  - A folder called **Output**
  - Images must be 1920x1080
- - Images must be uneditedand uncropped
+ - Images must be unedited and uncropped
  - Your background should be the Corpus theme. The hue transfers are optimized for the Corpus theme/background. Results with other backgrounds may vary.
 
 ### Running the Program
@@ -25,7 +25,7 @@ Add your screenshots in the **Raw** folder. Then just run _RivenImageProcessor.p
 
 ### Customizing the Program
 
-It is mandatory to set the path inside the program, as well as set the dimensions of the final collage.
+##### Mandatory Customizations
 
 On line 65, change the rootPath variable to the location where the project folder is downloaded.
 
