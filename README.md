@@ -1,7 +1,7 @@
 # Riven Image Processor
 A program that takes multiple riven screenshots, applies multiple hue transfers, and after some further editing, turns them into a collage.
 
-# TODO:
+### TODO:
  - Remove Use of ImageMagick
  - Support for any image size
  - Better Accessibility
