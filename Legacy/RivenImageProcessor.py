@@ -1,7 +1,9 @@
-from PIL import Image
+afrom PIL import Image
 import math
 import os
 from os.path import exists
+
+editedRivens = []
 
 def changeColor(img):
     width = img.size[0]
@@ -55,17 +57,62 @@ def cropImage(img, leftMargin, rightMargin, topMargin, bottomMargin):
     width, height = img.size
     img = img.crop((leftMargin, topMargin, width - rightMargin, height - bottomMargin))
     return img
+
+#def concatImages(columns, rows, imgName, outPath):
+
+
+
+    #os.chdir(outPath)
+    #if exists(imgName):
+    #    os.remove(imgName)
+    #os.system("magick montage -mode concatenate -tile " + str(columns) + "x" + str(rows) + " *.jpg " + imgName)
+
+def to2DList(imgList1D):
+    imgList2D = []
+    for i in range(0, len(imgList1D), columns):
+        imgList2D.append(imgList1D[i:i+columns])
+    return imgList2D
+
 def concatImages(columns, rows, imgName, outPath):
-    os.chdir(outPath)
-    if exists(imgName):
-        os.remove(imgName)
-    os.system("magick montage -mode concatenate -tile " + str(columns) + "x" + str(rows) + " *.jpg " + imgName)
+    #for each image in the directory outPath, add to the list of size columns*rows
+    imgList1D = []
+    for image in os.listdir(outPath):
+        if (image.endswith(".JPG")):
+            imgList1D.append(image)
+    imgList2D = to2DList(imgList1D)
+
+def create_collage():
+    cols = 4
+    rows = 4
+    thumbnail_width, thumbnail_height  = editedRivens[0].size
+    size = thumbnail_width, thumbnail_height
+    new_im = Image.new('RGB', (thumbnail_width * cols, thumbnail_height * rows))
+    ims = []
+    for p in editedRivens:
+        im = p
+        im.thumbnail(size)
+        ims.append(im)
+    i = 0
+    x = 0
+    y = 0
+    for col in range(cols):
+        for row in range(rows):
+            print(i, x, y)
+            new_im.paste(ims[i], (x, y))
+            i += 1
+            y += thumbnail_height
+        x += thumbnail_width
+        y = 0
+
+    new_im.save("Collage.jpg")
 
 
-rootPath = "C:/Users/swagn/downloads/"
 
-inPath = rootPath + "RivenCollection/Raw"
-outPath = rootPath + "RivenCollection/Output"
+
+rootPath = "C:/Users/shoum/Downloads/RivenImageProcessor-main/"
+
+inPath = rootPath + "RivenImageProcessor-main/Raw"
+outPath = rootPath + "RivenImageProcessor-main/Output"
 
 leftMargin = 815  
 rightMargin = 815
@@ -82,12 +129,10 @@ for imagePath in os.listdir(inPath):
         fullOutPath = os.path.join(outPath, imagePath)
         img = changeColor(cropImage(Image.open(inputPath), leftMargin, rightMargin, topMargin, bottomMargin))
         img.save(fullOutPath)
+        editedRivens.append(img)
 
-concatImages(columns, rows, finalImageName, outPath)
+#concatImages(columns, rows, finalImageName, outPath)
 
-Image.open(outPath + "/" + finalImageName).show()
+create_collage()
 
-
-
-
-
+#Image.open(outPath + "/" + finalImageName).show()
