@@ -1,11 +1,12 @@
+# THIS TOOL IS NOW OUTDATED, AS IT HAS BEEN PORTED AND REPLACED BY THE WEB VERSION
+
 # Riven Image Processor
 A program that takes multiple riven screenshots, applies multiple hue transfers, and after some further editing, turns them into a collage.
 
 ### TODO:
- - Remove Use of ImageMagick
  - Support for any image size
  - Better Accessibility
- - Port to wfcalc.org???
+ - Port to wfcalc.org
 
 ### Prerequisites
 To use the program, you need to install some packages and programs.
@@ -13,10 +14,6 @@ To use the program, you need to install some packages and programs.
 In the command line or bash, you need to type:
 
 ``` pip install Pillow ```
-
-Next install ImageMagick from the following link:
-
-https://imagemagick.org/script/download.php
 
 ### Requirements
  - A folder called **Raw**
@@ -51,7 +48,7 @@ By default, I have included an example where the input consists of 16 riven scre
 
 ### Credits
 
-Thank you to Lorelei for telling me about ImageMagick, and thank you Smurfdaddy for showing how a hue transfer works.
+Thank you Smurfdaddy for showing how a hue transfer works.
 
 ### Todo
 
