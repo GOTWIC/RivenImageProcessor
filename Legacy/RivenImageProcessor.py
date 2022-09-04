@@ -1,4 +1,4 @@
-afrom PIL import Image
+from PIL import Image
 import math
 import os
 from os.path import exists
