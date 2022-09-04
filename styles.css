@@ -1,19 +1,22 @@
-.output_txt {
-    position: absolute;
-    top: 30%;
-    left: 50%;
-}
-
-body {
+body{
     text-align: center;
 }
 
-form {
-    display: inline;
-    margin-left: auto;
-    margin-right: auto;
-    margin-top: auto;
-    margin-bottom: auto;
+.form_div{
+    margin-top: 10%;
+    width: 300;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    row-gap: 20px;
+    padding: 20px;
+    background-color: transparent;  
+}
+
+.color_op_form{
+    margin-top: 10px;
+    margin-bottom: 110px;
 }
 
 img {
@@ -39,22 +42,140 @@ button {
     position: relative;
     overflow: hidden;
     display: inline-block;
-}
-  
+} 
 .btn {
     border: 2px solid #ad5beb;
     color: #ad5beb;
-    background-color: black;
-    padding: 8px 20px;
+    background-color: transparent;
+    padding: 8px 30px;
     border-radius: 8px;
     font-size: 20px;
     font-weight: bold;
-}
-  
+} 
 .upload-btn-wrapper input[type=file] {
     font-size: 100px;
     position: absolute;
     left: 0;
     top: 0;
     opacity: 0;
+}
+
+
+
+.label{
+    color: #ad5beb;
+}
+h3 {
+    color: #ad5beb;
+}
+
+
+
+
+.css-checkbox {
+    position: absolute; 
+    overflow: hidden; 
+    clip: rect(0 0 0 0); 
+    height: 1px; 
+    width: 1px; 
+    margin: -1px; 
+    padding: 0; 
+    border: 0; 
+}    
+.css-checkbox + label { 
+    position: relative; 
+    font-size: 14px; 
+    cursor: pointer; 
+    display: inline-flex; 
+    align-items: center; 
+    height: 22px; 
+    color: rgb(0, 0, 0);
+}
+.css-checkbox + label::before {
+    content: " ";
+    display: inline-block; 
+    vertical-align: middle; 
+    margin-right: 3px; 
+    width: 20px; 
+    height: 20px; 
+    border-width: 2px; 
+    border-style: solid; 
+    border-color: #ad5beb; 
+    border-radius: 4px; 
+    box-shadow: none;
+}
+.css-checkbox:checked + label::after {
+    content: " "; 
+    background-image: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA1MTIgNTEyIj48cGF0aCBmaWxsPSIjZmZmZmZmIiBkPSJNMTczLjg5OCA0MzkuNDA0bC0xNjYuNC0xNjYuNGMtOS45OTctOS45OTctOS45OTctMjYuMjA2IDAtMzYuMjA0bDM2LjIwMy0zNi4yMDRjOS45OTctOS45OTggMjYuMjA3LTkuOTk4IDM2LjIwNCAwTDE5MiAzMTIuNjkgNDMyLjA5NSA3Mi41OTZjOS45OTctOS45OTcgMjYuMjA3LTkuOTk3IDM2LjIwNCAwbDM2LjIwMyAzNi4yMDRjOS45OTcgOS45OTcgOS45OTcgMjYuMjA2IDAgMzYuMjA0bC0yOTQuNCAyOTQuNDAxYy05Ljk5OCA5Ljk5Ny0yNi4yMDcgOS45OTctMzYuMjA0LS4wMDF6Ii8+PC9zdmc+"); 
+    background-repeat: no-repeat; 
+    background-size: 12px 12px; 
+    background-position: center center; 
+    position: absolute; 
+    display: flex; 
+    justify-content: center; 
+    align-items: center; 
+    margin-left: 0px; 
+    left: 0px; 
+    top: 0px; 
+    text-align: center; 
+    background-color: transparent; 
+    font-size: 10px; 
+    height: 22px; 
+    width: 22px;
+}
+
+
+
+
+
+/* The container must be positioned relative: */
+.custom-select {
+    position: relative;
+    font-family: Arial;
+} 
+.custom-select select {
+    display: none; /*hide original SELECT element: */
+}
+.select-selected {
+    background-color: transparent;
+}
+/* Style the arrow inside the select element: */
+.select-selected:after {
+    position: absolute;
+    content: "";
+    top: 14px;
+    right: 10px;
+    width: 0;
+    height: 0;
+    border: 6px solid transparent;
+    border-color: #ad5beb transparent transparent transparent;
+}
+/* Point the arrow upwards when the select box is open (active): */
+.select-selected.select-arrow-active:after {
+    border-color: transparent transparent #ad5beb transparent;
+    top: 7px;
+}
+/* style the items (options), including the selected item: */
+.select-items div,.select-selected {
+    color: #ad5beb;
+    padding: 8px 16px;
+    border: 1px solid transparent;
+    border-color: transparent #ad5beb transparent #ad5beb;
+    cursor: pointer;
+}
+/* Style items (options): */
+.select-items {
+    position: absolute;
+    background-color: transparent;
+    top: 100%;
+    left: 0;
+    right: 0;
+    z-index: 99;
+}
+/* Hide the items when the select box is closed: */
+.select-hide {
+    display: none;
+}
+.select-items div:hover, .same-as-selected {
+    background-color: #2b173b;
 }

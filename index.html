@@ -20,50 +20,10 @@ Image Processing with PyScript
 
 </head>
 
-<style>
-    input[type=text], select {
-      width: 100%;
-      padding: 12px 20px;
-      margin: 8px 0;
-      display: inline-block;
-      border: 1px solid #ccc;
-      border-radius: 4px;
-      box-sizing: border-box;
-    }
-    
-    input[type=submit] {
-      width: 100%;
-      background-color: #4c4faf;
-      color: white;
-      padding: 14px 20px;
-      margin: 8px 0;
-      border: none;
-      border-radius: 4px;
-      cursor: pointer;
-    }
-    
-    input[type=submit]:hover {
-      background-color: #45a049;
-    }
-    
-    p {
-      border-radius: 5px;
-      background-color: #f2f2f2;
-      padding: 20px;
-    }
-    </style>
-
 <body BGCOLOR="131313">
-  <form class="input_form" onsubmit="return false">
-
-
-    <div class="upload-btn-wrapper">
-      <button class="btn">Upload Rivens</button>
-      <input type="file" id="file-upload-pillow" name="myfile" multiple/>
-    </div>
-
-    <py-script>
-      from dataclasses import field
+  <py-script>
+    from dataclasses import field
+from xml.dom.minidom import Element
 from js import document, console, Uint8Array, window, File
 from pyodide import create_proxy
 import asyncio
@@ -79,7 +39,35 @@ bottomMargin = 335
 
 async def _upload_change_and_show(e):
 
-    document.getElementById("output_upload_pillow").innerHTML = ''
+    document.getElementById("output_loc").innerHTML = ''
+
+    normBKG = document.getElementById('normBKG').checked
+    color = document.getElementById('color_op').value
+    
+    red_modifier = 110
+    green_modifier = 90
+    blue_modifier = 135       
+
+    if(color == 'default'):
+        red_modifier = 110
+        green_modifier = 90
+        blue_modifier = 135
+    elif(color == 'blue'):
+        red_modifier = 65
+        green_modifier = 95
+        blue_modifier = 100
+    elif(color == 'red'):
+        red_modifier = 175
+        green_modifier = 95
+        blue_modifier = 195
+    elif(color == 'gold'):
+        red_modifier = 125
+        green_modifier = 100
+        blue_modifier = 70
+    elif(color == 'green'):
+        red_modifier = 75
+        green_modifier = 100
+        blue_modifier = 75
 
     file_list = e.target.files
 
@@ -95,7 +83,7 @@ async def _upload_change_and_show(e):
         my_image = Image.open(my_bytes)
 
         #Modify the image
-        my_image = modifyImage(my_image)
+        my_image = modifyImage(my_image, normBKG, red_modifier, green_modifier, blue_modifier)
 
         editedRivens.append(my_image)
 
@@ -132,7 +120,7 @@ async def _upload_change_and_show(e):
     #Create new tag and insert into page
     new_image = document.createElement('img')
     new_image.src = window.URL.createObjectURL(image_file)
-    document.getElementById("output_upload_pillow").appendChild(new_image)
+    document.getElementById("output_loc").appendChild(new_image)
 
     new_im.save()
     pyscript.write('blobURL', new_image.src)
@@ -146,10 +134,12 @@ async def createPilImage(item):
     my_image = Image.open(my_bytes)
     return my_image
     
-def modifyImage(img):
+def modifyImage(img, norm, r_m, g_m, b_m):
     img = cropImage(img, leftMargin, rightMargin, topMargin, bottomMargin)
+    if(norm):
+        img = changeColor(img, r_m, g_m, b_m)
     return img
-def changeColor(img):
+def changeColor(img, r_m, g_m, b_m):
     width = img.size[0]
     height = img.size[1]
     for i in range(0,width):
@@ -159,14 +149,9 @@ def changeColor(img):
             g = data[1]
             b = data[2]
 
-            # DEFAULT NUMBERS: 110, 90, 135
-            # GOLD: 125, 100, 70
-            # GREEN: 75, 100, 75
-            # BLUE: 65, 95, 100
-            # RED: 175, 95, 95
-            red_modifier = 65
-            green_modifier = 95
-            blue_modifier = 100
+            red_modifier = r_m
+            green_modifier = g_m
+            blue_modifier = b_m
 
             if (r <= 35) and (g <= 41) and (b <= 50):
                 if j < 365:
@@ -185,8 +170,8 @@ def changeColor(img):
                 img.putpixel((i,j),(42,43,48,1))
 
     #img.show()
-
     return img
+
 def isBackground(i,j,r,g,b):
     if(i >= 27) and (i <= 263) and (j >= 25) and (j <= 370):
         return False
@@ -206,14 +191,114 @@ def cropImage(img, leftMargin, rightMargin, topMargin, bottomMargin):
 # Run image processing code above whenever file is uploaded    
 upload_file = create_proxy(_upload_change_and_show)
 document.getElementById("file-upload-pillow").addEventListener("change", upload_file)
-
-
-    </py-script>
-
-  </form> 
-
+  </py-script>
+  <div class="form_div">
+    <form class="upload_form" id="upload_form" onsubmit="return false">
+      <div class="upload-btn-wrapper">
+        <button class="btn">Upload Rivens</button>
+        <input type="file" id="file-upload-pillow" name="myfile" multiple/>
+      </div>
+    </form> 
+    <form class="normBKG_for" id="normBKG_form" onsubmit="return false">
+      <div id="inputPreview">
+        <input name="cssCheckbox" id="normBKG" type="checkbox" class="css-checkbox">
+        <label for="normBKG"><h3 style="font-family: Arial;">Normalize Background</h3></label>
+      </div>
+    </form> 
+    <form class="color_op_form" id="color_op_form" onsubmit="return false">
+      <div class="custom-select" style="width:200px;">
+        <select id="color_op" name="color_op">
+          <option value="default">Default</option>
+          <option value="blue">Blue</option>
+          <option value="red">Red</option>
+          <option value="gold">Gold</option>
+          <option value="green">Green</option>
+        </select>
+      </div>
+      <script>
+        var x, i, j, l, ll, selElmnt, a, b, c;
+        /*look for any elements with the class "custom-select":*/
+        x = document.getElementsByClassName("custom-select");
+        l = x.length;
+        for (i = 0; i < l; i++) {
+          selElmnt = x[i].getElementsByTagName("select")[0];
+          ll = selElmnt.length;
+          /*for each element, create a new DIV that will act as the selected item:*/
+          a = document.createElement("DIV");
+          a.setAttribute("class", "select-selected");
+          a.innerHTML = selElmnt.options[selElmnt.selectedIndex].innerHTML;
+          x[i].appendChild(a);
+          /*for each element, create a new DIV that will contain the option list:*/
+          b = document.createElement("DIV");
+          b.setAttribute("class", "select-items select-hide");
+          for (j = 1; j < ll; j++) {
+            /*for each option in the original select element,
+            create a new DIV that will act as an option item:*/
+            c = document.createElement("DIV");
+            c.innerHTML = selElmnt.options[j].innerHTML;
+            c.addEventListener("click", function(e) {
+                /*when an item is clicked, update the original select box,
+                and the selected item:*/
+                var y, i, k, s, h, sl, yl;
+                s = this.parentNode.parentNode.getElementsByTagName("select")[0];
+                sl = s.length;
+                h = this.parentNode.previousSibling;
+                for (i = 0; i < sl; i++) {
+                  if (s.options[i].innerHTML == this.innerHTML) {
+                    s.selectedIndex = i;
+                    h.innerHTML = this.innerHTML;
+                    y = this.parentNode.getElementsByClassName("same-as-selected");
+                    yl = y.length;
+                    for (k = 0; k < yl; k++) {
+                      y[k].removeAttribute("class");
+                    }
+                    this.setAttribute("class", "same-as-selected");
+                    break;
+                  }
+                }
+                h.click();
+            });
+            b.appendChild(c);
+          }
+          x[i].appendChild(b);
+          a.addEventListener("click", function(e) {
+              /*when the select box is clicked, close any other select boxes,
+              and open/close the current select box:*/
+              e.stopPropagation();
+              closeAllSelect(this);
+              this.nextSibling.classList.toggle("select-hide");
+              this.classList.toggle("select-arrow-active");
+            });
+        }
+        function closeAllSelect(elmnt) {
+          /*a function that will close all select boxes in the document,
+          except the current select box:*/
+          var x, y, i, xl, yl, arrNo = [];
+          x = document.getElementsByClassName("select-items");
+          y = document.getElementsByClassName("select-selected");
+          xl = x.length;
+          yl = y.length;
+          for (i = 0; i < yl; i++) {
+            if (elmnt == y[i]) {
+              arrNo.push(i)
+            } else {
+              y[i].classList.remove("select-arrow-active");
+            }
+          }
+          for (i = 0; i < xl; i++) {
+            if (arrNo.indexOf(i)) {
+              x[i].classList.add("select-hide");
+            }
+          }
+        }
+        /*if the user clicks anywhere outside the select box,
+        then close all select boxes:*/
+        document.addEventListener("click", closeAllSelect);
+      </script>
+    </form>
+  </div>
   <!-- <div class="output_txt" id="textfield"><h1>Processed Image</h1></div> -->
-  <div class="output_loc" id="output_upload_pillow"></div>
+  <div class="output_loc" id="output_loc"></div>
 
   <label id='blobURL'></label>
     
