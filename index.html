@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+
+<head>
+
+<title>
+
+Image Processing with PyScript  
+    
+</title>
+
+<link rel="stylesheet" href="styles.css"/>
+
+<!-- <link rel="stylesheet" href="https://pyscript.net/alpha/pyscript.css" /> -->
+<script defer src="https://pyscript.net/alpha/pyscript.js"></script> 
+<py-env>
+    - numpy
+    - scipy
+    - Pillow
+</py-env>
+
+</head>
+
+<style>
+    input[type=text], select {
+      width: 100%;
+      padding: 12px 20px;
+      margin: 8px 0;
+      display: inline-block;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      box-sizing: border-box;
+    }
+    
+    input[type=submit] {
+      width: 100%;
+      background-color: #4c4faf;
+      color: white;
+      padding: 14px 20px;
+      margin: 8px 0;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    
+    input[type=submit]:hover {
+      background-color: #45a049;
+    }
+    
+    p {
+      border-radius: 5px;
+      background-color: #f2f2f2;
+      padding: 20px;
+    }
+    </style>
+
+<body BGCOLOR="131313">
+  <form class="input_form" onsubmit="return false">
+
+
+    <div class="upload-btn-wrapper">
+      <button class="btn">Upload Rivens</button>
+      <input type="file" id="file-upload-pillow" name="myfile" multiple/>
+    </div>
+
+    <py-script>
+      from dataclasses import field
+from js import document, console, Uint8Array, window, File
+from pyodide import create_proxy
+import asyncio
+import io
+import math
+
+from PIL import Image, ImageFilter
+
+leftMargin = 815  
+rightMargin = 815
+topMargin = 350
+bottomMargin = 335
+
+async def _upload_change_and_show(e):
+
+    document.getElementById("output_upload_pillow").innerHTML = ''
+
+    file_list = e.target.files
+
+    editedRivens = []
+
+    for i in range(len(file_list)):
+        
+        item = file_list.item(i)
+
+        array_buf = Uint8Array.new(await item.arrayBuffer())
+        bytes_list = bytearray(array_buf)
+        my_bytes = io.BytesIO(bytes_list) 
+        my_image = Image.open(my_bytes)
+
+        #Modify the image
+        my_image = modifyImage(my_image)
+
+        editedRivens.append(my_image)
+
+    numRivens = len(editedRivens)
+
+    cols = int(math.sqrt(numRivens))
+
+    while(numRivens%cols != 0):
+        cols = cols - 1
+
+    rows = int(numRivens / cols)
+
+    thumbnail_width, thumbnail_height  = editedRivens[0].size
+    new_im = Image.new('RGB', (thumbnail_width * cols, thumbnail_height * rows))
+    i = 0
+    x = 0
+    y = 0
+    for col in range(cols):
+        for row in range(rows):
+            print(i, x, y)
+            new_im.paste(editedRivens[i], (x, y))
+            i += 1
+            y += thumbnail_height
+        x += thumbnail_width
+        y = 0
+
+    my_image = new_im
+    my_stream = io.BytesIO()
+    my_image.save(my_stream, format="PNG")
+
+    #Create a JS File object with our data and the proper mime type
+    image_file = File.new([Uint8Array.new(my_stream.getvalue())], "new_image_file.png", {type: "image/png"})
+
+    #Create new tag and insert into page
+    new_image = document.createElement('img')
+    new_image.src = window.URL.createObjectURL(image_file)
+    document.getElementById("output_upload_pillow").appendChild(new_image)
+
+    new_im.save()
+    pyscript.write('blobURL', new_image.src)
+
+    
+
+async def createPilImage(item):
+    array_buf = Uint8Array.new(await item.arrayBuffer())
+    bytes_list = bytearray(array_buf)
+    my_bytes = io.BytesIO(bytes_list) 
+    my_image = Image.open(my_bytes)
+    return my_image
+    
+def modifyImage(img):
+    img = cropImage(img, leftMargin, rightMargin, topMargin, bottomMargin)
+    return img
+def changeColor(img):
+    width = img.size[0]
+    height = img.size[1]
+    for i in range(0,width):
+        for j in range(0,height):
+            data = img.getpixel((i,j))
+            r = data[0]
+            g = data[1]
+            b = data[2]
+
+            # DEFAULT NUMBERS: 110, 90, 135
+            # GOLD: 125, 100, 70
+            # GREEN: 75, 100, 75
+            # BLUE: 65, 95, 100
+            # RED: 175, 95, 95
+            red_modifier = 65
+            green_modifier = 95
+            blue_modifier = 100
+
+            if (r <= 35) and (g <= 41) and (b <= 50):
+                if j < 365:
+                    img.putpixel((i,j),(32,33,36))
+                else:
+                    img.putpixel((i,j),(42,43,48))
+            elif (b > r) and (b > math.ceil(1.2*g)) and (b < 2*r):
+                img.putpixel((i,j),(math.ceil(r*red_modifier/110), math.ceil(g*green_modifier/90), math.ceil(b*blue_modifier/135)))
+                #img.putpixel((i,j),(255,255,255))
+            
+            elif (g > b*0.4) or (b > r) or (g > r*0.5) or (r > 4*g):
+                bw = int(math.ceil((r+g+b)/3))
+                img.putpixel((i,j),(bw,bw,bw))
+
+            if isBackground(i,j,r,g,b):
+                img.putpixel((i,j),(42,43,48,1))
+
+    #img.show()
+
+    return img
+def isBackground(i,j,r,g,b):
+    if(i >= 27) and (i <= 263) and (j >= 25) and (j <= 370):
+        return False
+    else:
+        #if (abs(r - g) <= 5) or (abs(r - b) <= 5) or (abs(g - b) <= 10):
+        #    return False
+        if (g > r + 20) or (g > b + 20):
+            return True
+        else:
+            return False    
+def cropImage(img, leftMargin, rightMargin, topMargin, bottomMargin):
+    width, height = img.size
+    img = img.crop((leftMargin, topMargin, width - rightMargin, height - bottomMargin))
+    return img
+
+
+# Run image processing code above whenever file is uploaded    
+upload_file = create_proxy(_upload_change_and_show)
+document.getElementById("file-upload-pillow").addEventListener("change", upload_file)
+
+
+    </py-script>
+
+  </form> 
+
+  <!-- <div class="output_txt" id="textfield"><h1>Processed Image</h1></div> -->
+  <div class="output_loc" id="output_upload_pillow"></div>
+
+  <label id='blobURL'></label>
+    
+</body>
+</html>
