@@ -127,10 +127,8 @@ async def _upload_change_and_show(e):
     #Create new tag and insert into page
     new_image = document.createElement('img')
     new_image.src = window.URL.createObjectURL(image_file)
+    document.querySelector("img").setAttribute("src", new_im)
     document.getElementById("output_loc").appendChild(new_image)
-
-    #new_im.save()
-    pyscript.write('blobURL', new_image.src)
 
     
 
@@ -214,6 +212,7 @@ document.getElementById("file-upload-pillow").addEventListener("change", upload_
         <label for="normBKG"><h3 style="font-family: Arial;">Normalize Background</h3></label>
       </div>
     </form> 
+    <img id ="img" src="src">
     <form class="color_op_form" id="color_op_form" onsubmit="return false">
       <div class="custom-select" style="width:200px;">
         <select id="color_op" name="color_op">
