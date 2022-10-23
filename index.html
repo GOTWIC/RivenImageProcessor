@@ -22,8 +22,7 @@ Image Processing with PyScript
 
 <body BGCOLOR="131313">
   <py-script>
-    from dataclasses import field
-from xml.dom.minidom import Element
+from dataclasses import field
 from js import document, console, Uint8Array, window, File
 from pyodide import create_proxy
 import asyncio
@@ -40,7 +39,7 @@ bottomMargin = 335
 async def _upload_change_and_show(e):
 
     document.getElementById("output_loc").innerHTML = ''
-
+    
     normBKG = document.getElementById('normBKG').checked
     color = document.getElementById('color_op').value
     
@@ -73,6 +72,9 @@ async def _upload_change_and_show(e):
 
     editedRivens = []
 
+    if len(file_list) == 0:
+        return
+
     for i in range(len(file_list)):
         
         item = file_list.item(i)
@@ -81,6 +83,8 @@ async def _upload_change_and_show(e):
         bytes_list = bytearray(array_buf)
         my_bytes = io.BytesIO(bytes_list) 
         my_image = Image.open(my_bytes)
+
+        #my_image = my_image.resize((1920, 1080))
 
         #Modify the image
         my_image = modifyImage(my_image, normBKG, red_modifier, green_modifier, blue_modifier)
@@ -92,11 +96,14 @@ async def _upload_change_and_show(e):
     cols = int(math.sqrt(numRivens))
 
     while(numRivens%cols != 0):
-        cols = cols - 1
+        cols = cols + 1
 
     rows = int(numRivens / cols)
 
-    thumbnail_width, thumbnail_height  = editedRivens[0].size
+    if rows > cols:
+        rows, cols = cols, rows
+
+    thumbnail_width, thumbnail_height = editedRivens[0].size
     new_im = Image.new('RGB', (thumbnail_width * cols, thumbnail_height * rows))
     i = 0
     x = 0
@@ -122,7 +129,7 @@ async def _upload_change_and_show(e):
     new_image.src = window.URL.createObjectURL(image_file)
     document.getElementById("output_loc").appendChild(new_image)
 
-    new_im.save()
+    #new_im.save()
     pyscript.write('blobURL', new_image.src)
 
     
@@ -184,7 +191,9 @@ def isBackground(i,j,r,g,b):
             return False    
 def cropImage(img, leftMargin, rightMargin, topMargin, bottomMargin):
     width, height = img.size
-    img = img.crop((leftMargin, topMargin, width - rightMargin, height - bottomMargin))
+    wMod = width/1920
+    hMod = height/1090
+    img = img.crop((leftMargin * wMod, topMargin * hMod, width - rightMargin * wMod, height - bottomMargin * hMod))
     return img
 
 
@@ -297,7 +306,7 @@ document.getElementById("file-upload-pillow").addEventListener("change", upload_
       </script>
     </form>
   </div>
-  <!-- <div class="output_txt" id="textfield"><h1>Processed Image</h1></div> -->
+  <div id="test-output"></div>
   <div class="output_loc" id="output_loc"></div>
 
   <label id='blobURL'></label>
