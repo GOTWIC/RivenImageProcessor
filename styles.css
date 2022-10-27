@@ -68,6 +68,20 @@ button {
 h3 {
     color: #ad5beb;
 }
+p1 {
+    color: #ad5beb;
+}
+.instructions{
+    border-width:2px;
+    border-style:solid;
+    border-color: #ad5beb;
+    width: 50%;
+    padding-bottom: 20px;
+
+    margin: 0 auto;
+
+}
+
 
 
 
