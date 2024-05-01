@@ -1,5 +1,5 @@
 # Riven Image Processor
 
-Check out the [tool on the site](https://www.wfcalc.org/).
+Check out the [tool on the site](https://gotwic.github.io/RivenImageProcessor/).
 
 Guide coming soon!
